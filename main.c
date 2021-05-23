@@ -6,11 +6,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define GPIO_SEL0 0X3F200000
-#define GPIO_SET0 0X3F20001C
-#define GPIO_CLR0 0X3F200028
-#define LED_PIN 1 << 3 
-// Pines 11-9, FSEL3 = 001 -> pin as output
+//#define GPIO_SEL0 0X3F200000
+//
+// GPIO1 0x4804_C000
+#define GPIO_SETDATAOUT1 0x4804C000 + 0x194  // offset 0x194
+#define GPIO_CLEARDATAOUT1 0x4804C000 + 0x190 // offset 0x190
+#define GPIO_DATAOUT1 0x4804C000 + 0x13C
+#define LED_PIN 1 << 22 
 
 void *map_perif(void *addr, int fd){
     int page = getpagesize();
@@ -26,7 +28,7 @@ void *map_perif(void *addr, int fd){
 }
 
 int main(){
-    printf("Hello world, i am a rpi\n");
+    printf("Hello world, i am a pocket beagle\n");
 
     int fd = open("/dev/mem", O_RDWR);
     if (fd == -1){
@@ -34,15 +36,12 @@ int main(){
         return -1;
     }
     printf("Se ha abierto el archivo /dev/mem\n");
-    uint32_t *gpio_sel = map_perif((void *)GPIO_SEL0, fd); 
-    uint32_t *gpio_set = map_perif((void *)GPIO_SET0, fd); 
-    uint32_t *gpio_clr = map_perif((void *)GPIO_CLR0, fd); 
+    uint32_t *gpio_set = map_perif((void *)GPIO_SETDATAOUT1, fd); 
+    uint32_t *gpio_clr = map_perif((void *)GPIO_CLEARDATAOUT1, fd); 
+    uint32_t *gpio_data = map_perif((void *)GPIO_DATAOUT1, fd); 
     printf("Se tiene acceso a todos los registros en VMA\n");
-    printf("\t gpio_sel esta en la dirreccion virtual: %x\n",(unsigned int)gpio_sel);
 
-    printf("gpio sel content is %x\n",  *gpio_sel);
-    *gpio_sel = *gpio_sel & ~(0x7 << 9);
-    *gpio_sel = *gpio_sel | (0x1 << 9);
+    printf("gpio1 content is %x\n",  *gpio_data);
 
     while(1){
         *gpio_set = LED_PIN;
