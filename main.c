@@ -6,13 +6,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-//#define GPIO_SEL0 0X3F200000
-//
 // GPIO1 0x4804_C000
-#define GPIO_SETDATAOUT1 0x4804C000 + 0x194  // offset 0x194
-#define GPIO_CLEARDATAOUT1 0x4804C000 + 0x190 // offset 0x190
+#define GPIO_SETDATAOUT1 0x4804C000 + 0x194
+#define GPIO_CLEARDATAOUT1 0x4804C000 + 0x190
 #define GPIO_DATAOUT1 0x4804C000 + 0x13C
-#define LED_PIN 1 << 22 
+#define LED_PIN 1 << 22 //usr1 
 
 void *map_perif(void *addr, int fd){
     int page = getpagesize();
